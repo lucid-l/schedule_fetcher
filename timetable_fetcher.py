@@ -1,5 +1,6 @@
 import bs4
 import requests
+import re
 
 def fetch_timetable(
     site_URL: str = "https://ss-ikrsnjavoga-nasice.skole.hr/raspored-sati/",
@@ -14,8 +15,16 @@ def fetch_timetable(
         found_links = []
 
         for link in all_links:
-            if timetable_name in str(link):
-                found_links.append(link)
+            link_name = str(link)
+            if timetable_name in link_name:
+                if "drive" in link_name:
+                    id = re.search(r'/d/([^/]+)', link_name).group(1)
+                    link = pdf_link = f"https://drive.google.com/uc?export=download&id={id}"
+                    link = bs4.BeautifulSoup(f"<a href='{link}'>Download</a>", 'html.parser').a
+                    found_links.append(link)
+                else:
+                    found_links.append(link)
+                    
         if len(found_links) > 1:
             old_schedule_link = found_links[0]['href']
             new_schedule_link = found_links[1]['href']
