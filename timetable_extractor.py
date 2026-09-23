@@ -226,15 +226,14 @@ def return_schedule_as_json(pdf_link):
     return schedule
 
 def return_info_as_json(pdf_link):
-    # Extract shift from URL (A for morning, B for afternoon)
-    shift_match = re.search(r'GIM-EK-([AB])', pdf_link)
+    shift_match = re.search(r'GIM-EK ([AB])', pdf_link)
     shift = "morning" if shift_match and shift_match.group(1) == "A" else "afternoon"
 
     info = {
         "timetable_link": pdf_link,
         "link_date": extract_date_from_link(pdf_link),
         "shift": shift,
-        "class_teacher": SUBJECT_MAP.get("SK", ["Unknown", "Unknown"])[0]
+        "class_teacher": SUBJECT_MAP.get("SK", ["Unknown"] * 2)[0]
     }
 
     return info
